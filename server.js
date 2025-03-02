@@ -4,6 +4,7 @@ const sequelize = require('./config/db');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/auth')
+const issueRoute = require('./routes/issueRoute')
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use('/equipment', equipmentRoutes)
 app.use('/users', userRoutes)
 app.use('/auth',authRoutes)
+app.use('/issue',issueRoute)
 
 // Sync ฐานข้อมูลและเริ่มต้นเซิร์ฟเวอร์
 sequelize.sync()

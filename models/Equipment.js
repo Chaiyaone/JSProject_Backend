@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
 const Equipment = sequelize.define('equipment', {
-    equipment_id: {
+    id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
@@ -14,10 +14,6 @@ const Equipment = sequelize.define('equipment', {
     equipment_type: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    last_repair: {
-        type: DataTypes.DATE,
-        allowNull: true
     },
     repair_count: {
         type: DataTypes.INTEGER,
