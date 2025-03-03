@@ -1,12 +1,35 @@
 const Equipment = require('../models/Equipment');
 
-exports.getAllEquipment = (req, res) => {
-    Equipment.findAll().then(equipment => {
-        res.json(equipment);
-    }).catch(err => {
+// exports.getAllEquipment = (req, res) => {  codeเก่าก่อนเพิ่มเงื่อนไขแสดงไม่เกิน 10 หน้า
+//     Equipment.findAll().then(equipment => {
+//         res.json(equipment);
+//     }).catch(err => {
+//         res.status(500).send(err);
+//     });
+// };
+
+exports.getAllEquipment = async (req, res) => {
+    let page = parseInt(req.query.page) || 1; // หน้าเริ่มต้นที่ 1
+    let limit = parseInt(req.query.limit) || 10; // แสดงได้สูงสุดไม่เกิน10หน้า
+    let offset = (page - 1) * limit; // หาจุดเริ่มต้น
+
+    try {
+        const { count, rows: equipment } = await Equipment.findAndCountAll({
+            limit: limit,
+            offset: offset,
+            order: [['id', 'ASC']], // เรียงจากน้อยไปมาก
+        });
+
+        res.json({
+            equipment,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+        });
+    } catch (err) {
         res.status(500).send(err);
-    });
+    }
 };
+
 
 exports.getEquipmentById = (req, res) => {
     Equipment.findByPk(req.params.id).then(equipment => {
@@ -30,11 +53,11 @@ exports.createEquipment = (req, res) => {
 
 exports.deleteEquipment = (req, res) => {
     Equipment.findByPk(req.params.id).then(equipment => {
-        if (!equipment) { // ตรวจสอบว่า equipment มีอยู่หรือไม่
+        if (!equipment) { 
             res.status(404).send('Equipment not found');
         } else {
             equipment.destroy().then(() => {
-                res.send({ message: 'Equipment deleted successfully' }); // ส่งข้อความยืนยันการลบ
+                res.send({ message: 'Equipment deleted successfully' }); 
             }).catch(err => {
                 res.status(500).send(err);
             });
