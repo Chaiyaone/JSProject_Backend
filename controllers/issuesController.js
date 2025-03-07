@@ -52,7 +52,6 @@ exports.deleteIssue = async (req, res) => {
     if (!issue) {
       return res.status(404).json({ message: "Issue not found" });
     }
-    
 
     await Completed.create({
       issue_id: issue.id,
@@ -72,10 +71,16 @@ exports.deleteIssue = async (req, res) => {
 exports.createIssue = async (req, res) => {
   try {
     const { user_id, equipment_id, description } = req.body;
-
+    const user = await User.findOne({ where: { id:user_id, deleted_at: null } });
+    const eq = await Equipment.findOne({ where: { id:equipment_id, deleted_at: null } });
 
     if (!user_id || !equipment_id || !description) {
       return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
+    }
+
+    if(!user || !eq){
+      console.log("Not found This user")
+      return res.status(400).json({message: "ไม่พบ ผู้ใช้/อุปกรณ์ หมายเลชนี้"})
     }
 
     const newIssue = await Issues.create({
@@ -93,7 +98,7 @@ exports.createIssue = async (req, res) => {
     equipment.repair_count += 1;
 
     await equipment.save();
-
+    
     res.status(201).json(newIssue);
   } catch (error) {
     console.error(error);
