@@ -24,7 +24,11 @@ const Equipment = sequelize.define('equipment', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         allowNull: false
-    }
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      }
 }, {
     tableName: 'equipment'
 });

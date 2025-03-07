@@ -1,33 +1,58 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs'); // ใช้เข้ารหัส password
+const User = require("../models/User");
+//const jwt = require('jsonwebtoken');
+//const bcrypt = require('bcryptjs'); // ใช้เข้ารหัส password
 
 exports.register = async (req, res) => {
-    try {
-        const { username, email, password, phone, role } = req.body;
+  try {
+    const { username, firstName, lastName, password, phone, role } = req.body;
+    const newUser = await User.create({
+      username,
+      firstName,
+      lastName,
+      password,
+      phone,
+      role: role || "user",
+    });
 
-        // 🟢 1. ตรวจสอบว่า `email` มีอยู่ในระบบหรือไม่
-        const existingUser = await User.findOne({ where: { email } });
+    return res
+      .status(201)
+      .json({ message: "สมัครสมาชิกสำเร็จ", user: newUser });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email นี้ถูกใช้ไปแล้ว' });
-        }
+exports.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    console.log("Received login request:", { username, password });
 
-        // 🟢 2. เข้ารหัสรหัสผ่าน
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.findOne({ where: { username, deleted_at: null } });
+    console.log("User found:", user);
 
-        // 🟢 3. สร้าง User ใหม่
-        const newUser = await User.create({
-            username,
-            email,
-            password: hashedPassword,
-            phone,
-            role: role || 'user', // ค่า default เป็น 'user'
-        });
-
-        return res.status(201).json({ message: 'สมัครสมาชิกสำเร็จ', user: newUser });
-
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Server Error' });
+    if (!user || user.role !== "admin") {
+      console.log("User not found");
+      return res
+        .status(400)
+        .json({ message: "ไม่มีสิทธิ์เข้า" });
     }
+
+    if (user.password !== password || user.role !== "admin") {
+      console.log("Password mismatch");
+      return res
+        .status(400)
+        .json({ message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
+    }
+
+    console.log("Login successful");
+    res.status(200).json({
+      message: "เข้าสู่ระบบสำเร็จ",
+      //role: user.role
+      user: { id: user.id, username: user.username, role: user.role ,deleted_at: user.deleted_at},
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
+  }
 };

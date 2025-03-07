@@ -19,13 +19,8 @@ const User = sequelize.define('users', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-    },
     role: {
-        type: DataTypes.ENUM('user', 'technician', 'admin'),
+        type: DataTypes.ENUM('user','admin'),
         allowNull: false,
         defaultValue: 'user'
     },
@@ -33,7 +28,11 @@ const User = sequelize.define('users', {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         allowNull: false
-    }
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      }
 }, {
     tableName: 'users',
     timestamps: false

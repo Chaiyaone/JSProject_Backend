@@ -1,6 +1,6 @@
 const Equipment = require('../models/Equipment');
 
-// exports.getAllEquipment = (req, res) => {  codeเก่าก่อนเพิ่มเงื่อนไขแสดงไม่เกิน 10 หน้า
+// exports.getAllEquipment = (req, res) => {  //codeเก่าก่อนเพิ่มเงื่อนไขแสดงไม่เกิน 10 หน้า
 //     Equipment.findAll().then(equipment => {
 //         res.json(equipment);
 //     }).catch(err => {
@@ -15,6 +15,7 @@ exports.getAllEquipment = async (req, res) => {
 
     try {
         const { count, rows: equipment } = await Equipment.findAndCountAll({
+            where: { deleted_at: null },
             limit: limit,
             offset: offset,
             order: [['id', 'ASC']], // เรียงจากน้อยไปมาก
@@ -32,7 +33,12 @@ exports.getAllEquipment = async (req, res) => {
 
 
 exports.getEquipmentById = (req, res) => {
-    Equipment.findByPk(req.params.id).then(equipment => {
+    Equipment.findOne({
+        where: {
+            id: req.params.id,
+            deleted_at: null
+        }
+    }).then(equipment => {
         if (!equipment) {
             res.status(404).send('Equipment not found');
         } else {
@@ -56,8 +62,8 @@ exports.deleteEquipment = (req, res) => {
         if (!equipment) { 
             res.status(404).send('Equipment not found');
         } else {
-            equipment.destroy().then(() => {
-                res.send({ message: 'Equipment deleted successfully' }); 
+            equipment.update({ deleted_at: new Date() }).then(() => {
+                res.send({ message: 'ลบอุปกรณ์ออกเรียบร้อย' });
             }).catch(err => {
                 res.status(500).send(err);
             });
@@ -68,7 +74,10 @@ exports.deleteEquipment = (req, res) => {
 };
 
 exports.updateEquipment = (req,res) => {
-    Equipment.findByPk(req.params.id).then(equipment => {
+    Equipment.findOne({
+        id: req.params.id,
+        deleted_at: null
+    }).then(equipment => {
         if(!equipment){
             res.status(404).send('Equipment not found')
         } else{

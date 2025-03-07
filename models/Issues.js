@@ -30,7 +30,7 @@ const Issues = sequelize.define('issues', {
         allowNull: false
     },
     status: {
-        type: DataTypes.ENUM('in_progress', 'pending', 'complete'),
+        type: DataTypes.ENUM('in_progress','complete'),
         allowNull: false,
         defaultValue: 'in_progress'
     },
@@ -45,6 +45,7 @@ const Issues = sequelize.define('issues', {
 });
 
 // ✅ กำหนดความสัมพันธ์ระหว่าง Issues กับ User และ Equipment
-Issues.belongsTo(Equipment, { foreignKey: 'equipment_id', as: 'equipment' });
+Issues.belongsTo(Equipment, { foreignKey: 'equipment_id', as: 'Equipment' });
+Issues.belongsTo(User, { foreignKey: 'user_id', as: 'User' });
 
 module.exports = Issues;
