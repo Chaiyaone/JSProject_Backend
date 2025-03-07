@@ -1,6 +1,4 @@
 const User = require("../models/User");
-//const jwt = require('jsonwebtoken');
-//const bcrypt = require('bcryptjs'); // ใช้เข้ารหัส password
 
 exports.register = async (req, res) => {
   try {
@@ -48,7 +46,6 @@ exports.login = async (req, res) => {
     console.log("Login successful");
     res.status(200).json({
       message: "เข้าสู่ระบบสำเร็จ",
-      //role: user.role
       user: { id: user.id, username: user.username, role: user.role ,deleted_at: user.deleted_at},
     });
   } catch (err) {

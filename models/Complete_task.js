@@ -1,7 +1,8 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const DataTypes = require('sequelize');
 const sequelize = require('../config/db');
 const Issues = require('./Issues');
 const User = require('./User');
+const Equipment = require('./Equipment');
 
 const CompletedTasks = sequelize.define('completed_tasks', {
     id: {
@@ -9,8 +10,16 @@ const CompletedTasks = sequelize.define('completed_tasks', {
         autoIncrement: true,
         primaryKey: true
     },
+    equipment_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Equipment,
+            key: 'id' 
+        }
+    },
     issue_id: {
-        type: DataTypes.INTEGER, // เปลี่ยนเป็น INTEGER เพื่อให้ตรงกับ PK ของ Issues
+        type: DataTypes.INTEGER, 
         allowNull: false,
         references: {
             model: Issues,
@@ -18,24 +27,23 @@ const CompletedTasks = sequelize.define('completed_tasks', {
         }
     },
     user_id: {
-        type: DataTypes.INTEGER, // เปลี่ยนเป็น INTEGER เพื่อให้ตรงกับ PK ของ User
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: User,
             key: 'id'
         }
     },
-    completed_at: { // เปลี่ยนจาก created_at เป็น completed_at
+    completed_at: { 
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
         allowNull: false
     }
 }, {
-    tableName: 'completed_tasks', // เปลี่ยนชื่อตารางให้สื่อความหมาย
+    tableName: 'completed_tasks', 
     timestamps: false
 });
 
-// กำหนดความสัมพันธ์ให้ถูกต้อง
 CompletedTasks.belongsTo(Issues, { foreignKey: 'issue_id', as: 'issue' });
 CompletedTasks.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 

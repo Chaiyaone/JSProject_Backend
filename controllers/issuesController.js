@@ -1,11 +1,10 @@
-// controllers/issueController.js
 const Issues = require('../models/Issues');
 const Equipment = require('../models/Equipment');
 const User = require('../models/User');
 
 exports.getAllIssues = async (req, res) => {
     let page = parseInt(req.query.page) || 1;
-    let limit = parseInt(req.query.limit) || 5; // รับค่า limit จาก Frontend
+    let limit = parseInt(req.query.limit) || 5; 
     let offset = (page - 1) * limit;
   
     try {
@@ -23,7 +22,8 @@ exports.getAllIssues = async (req, res) => {
             
           }
         ],
-        limit: limit, // ใช้ limit ที่ได้รับจาก Frontend
+        where: { completed_at: null },
+        limit: limit, 
         offset: offset,
         order: [['id', 'ASC']]
       });
@@ -39,15 +39,32 @@ exports.getAllIssues = async (req, res) => {
       res.json({
         issues: formattedIssues,
         currentPage: page,
-        totalPages: Math.ceil(count / limit) // คำนวณ totalPages ตาม limit
+        totalPages: Math.ceil(count / limit) 
       });
     } catch (err) {
       console.error("Error fetching issues:", err);
       res.status(500).json({ message: "Error fetching issues" });
     }
   };
-
-
+  
+  
+  exports.deleteIssue = async (req, res) => {
+    try {
+      const issue = await Issues.findByPk(req.params.id);
+      console.log(issue.id)
+      if (!issue) {
+        return res.status(404).json({ message: 'Issue not found' });
+      }
+  
+      await issue.update({ completed_at: new Date(), status: "completed" });
+  
+  
+      res.json({ message: 'งานสำเร็จและบันทึกลง CompletedTasks แล้ว' });
+    } catch (err) {
+      console.error("Error:", err);
+      res.status(500).json({ message: 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์' });
+    }
+  };
 
 
 exports.createIssue = async (req, res) => {

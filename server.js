@@ -9,13 +9,11 @@ const issueRoute = require('./routes/issueRoute')
 const app = express();
 app.use(express.json());
 
-// ใช้ routes
 app.use('/equipment', equipmentRoutes)
 app.use('/users', userRoutes)
 app.use('/auth',authRoutes)
 app.use('/issue',issueRoute)
 
-// Sync ฐานข้อมูลและเริ่มต้นเซิร์ฟเวอร์
 sequelize.sync()
     .then(() => {
         const port = process.env.PORT || 3000;

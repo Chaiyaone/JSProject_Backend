@@ -1,10 +1,10 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const DataTypes = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./User');
 const Equipment = require('./Equipment');
 
 const Issues = sequelize.define('issues', {
-    id: { // ✅ เปลี่ยนจาก issue_id เป็น id เพื่อให้ Sequelize ใช้ได้สะดวก
+    id: { 
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
@@ -14,7 +14,7 @@ const Issues = sequelize.define('issues', {
         allowNull: false,
         references: {
             model: Equipment,
-            key: 'id' // ✅ ใช้ id ที่เป็น primary key ของ Equipment
+            key: 'id' 
         }
     },
     user_id: {
@@ -30,10 +30,14 @@ const Issues = sequelize.define('issues', {
         allowNull: false
     },
     status: {
-        type: DataTypes.ENUM('in_progress','complete'),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'in_progress'
     },
+    completed_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+      },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -44,7 +48,6 @@ const Issues = sequelize.define('issues', {
     timestamps: false
 });
 
-// ✅ กำหนดความสัมพันธ์ระหว่าง Issues กับ User และ Equipment
 Issues.belongsTo(Equipment, { foreignKey: 'equipment_id', as: 'Equipment' });
 Issues.belongsTo(User, { foreignKey: 'user_id', as: 'User' });
 
