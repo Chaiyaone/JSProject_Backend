@@ -34,6 +34,11 @@ const CompletedTasks = sequelize.define('completed_tasks', {
             key: 'id'
         }
     },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "Completed"
+    },
     completed_at: { 
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -44,7 +49,8 @@ const CompletedTasks = sequelize.define('completed_tasks', {
     timestamps: false
 });
 
-CompletedTasks.belongsTo(Issues, { foreignKey: 'issue_id', as: 'issue' });
-CompletedTasks.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+CompletedTasks.belongsTo(Issues, { foreignKey: 'issue_id', as: 'Issues' });
+CompletedTasks.belongsTo(Equipment, { foreignKey: 'user_id', as: 'Equipment' });
+CompletedTasks.belongsTo(User,{foreignKey: 'equipment_id', as : "User"})
 
 module.exports = CompletedTasks;

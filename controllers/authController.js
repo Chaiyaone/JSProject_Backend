@@ -1,25 +1,5 @@
 const User = require("../models/User");
 
-exports.register = async (req, res) => {
-  try {
-    const { username, firstName, lastName, password, phone, role } = req.body;
-    const newUser = await User.create({
-      username,
-      firstName,
-      lastName,
-      password,
-      phone,
-      role: role || "user",
-    });
-
-    return res
-      .status(201)
-      .json({ message: "สมัครสมาชิกสำเร็จ", user: newUser });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server Error" });
-  }
-};
 
 exports.login = async (req, res) => {
   try {

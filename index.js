@@ -3,8 +3,9 @@ const express = require('express');
 const sequelize = require('./config/db');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/auth')
-const issueRoute = require('./routes/issueRoute')
+const authRoutes = require('./routes/auth');
+const issueRoute = require('./routes/issueRoute');
+const completedRoutes = require('./routes/completedRoutes');
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use('/equipment', equipmentRoutes)
 app.use('/users', userRoutes)
 app.use('/auth',authRoutes)
 app.use('/issue',issueRoute)
+app.use('/completed',completedRoutes)
 
 sequelize.sync()
     .then(() => {
