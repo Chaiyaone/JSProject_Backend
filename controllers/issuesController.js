@@ -54,7 +54,7 @@ exports.deleteIssue = async (req, res) => {
     }
     
 
-    const completed = await Completed.create({
+    await Completed.create({
       issue_id: issue.id,
       equipment_id: issue.equipment_id,
       user_id: issue.user_id,

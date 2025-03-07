@@ -4,20 +4,15 @@ const User = require("../models/User");
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log("Received login request:", { username, password });
-
     const user = await User.findOne({ where: { username, deleted_at: null } });
-    console.log("User found:", user);
 
     if (!user || user.role !== "admin") {
-      console.log("User not found");
       return res
         .status(400)
         .json({ message: "ไม่มีสิทธิ์เข้า" });
     }
 
     if (user.password !== password || user.role !== "admin") {
-      console.log("Password mismatch");
       return res
         .status(400)
         .json({ message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
