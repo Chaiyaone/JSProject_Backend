@@ -32,6 +32,7 @@ exports.getAllIssues = async (req, res) => {
       equipment_name: issue.Equipment?.equipment_name || "Guest",
       username: issue.User?.username || "Guest",
       description: issue.description,
+      technician_name: issue.technician_name,
       created_at: issue.created_at,
       status: issue.status,
     }));
@@ -70,38 +71,49 @@ exports.deleteIssue = async (req, res) => {
 
 exports.createIssue = async (req, res) => {
   try {
-    const { user_id, equipment_id, description } = req.body;
-    const user = await User.findOne({ where: { id:user_id, deleted_at: null } });
-    const eq = await Equipment.findOne({ where: { id:equipment_id, deleted_at: null } });
+    const { user_id, equipment_id, technician_id, description } = req.body;
 
     if (!user_id || !equipment_id || !description) {
       return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
     }
 
-    if(!user || !eq){
-      console.log("Not found This user")
-      return res.status(400).json({message: "ไม่พบ ผู้ใช้/อุปกรณ์ หมายเลชนี้"})
+    const user = await User.findOne({
+      where: { id: user_id, deleted_at: null },
+    });
+
+    const eq = await Equipment.findOne({
+      where: { id: equipment_id, deleted_at: null },
+    });
+
+    const technician = await User.findOne({
+      where: { id: technician_id, role: "technician" },
+      attributes: ["username"],
+    });
+
+    if (!user || !eq) {
+      return res.status(400).json({ message: "ไม่พบ ผู้ใช้/อุปกรณ์ หมายเลขนี้" });
     }
+
+    if (!technician) {
+      return res.status(400).json({ message: "ไม่พบช่างหมายเลขนี้ หรือไม่มีสิทธิ์เป็น technician" });
+    }
+
 
     const newIssue = await Issues.create({
       user_id,
       equipment_id,
       description,
+      technician_name: technician.username,
     });
 
-    const equipment = await Equipment.findByPk(equipment_id);
+    // อัปเดตค่า repair_count ของอุปกรณ์
+    eq.repair_count += 1;
+    await eq.save();
 
-    if (!equipment) {
-      return res.status(404).json({ message: "ไม่พบอุปกรณ์" });
-    }
-
-    equipment.repair_count += 1;
-
-    await equipment.save();
-    
     res.status(201).json(newIssue);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 };
+

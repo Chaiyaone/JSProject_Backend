@@ -25,6 +25,10 @@ const Issues = sequelize.define('issues', {
             key: 'id'
         }
     },
+    technician_name: {
+        type: DataTypes.STRING,
+        allowNull:false
+    },
     description: {
         type: DataTypes.TEXT,
         allowNull: false

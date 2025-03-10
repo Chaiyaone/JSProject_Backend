@@ -49,8 +49,8 @@ const CompletedTasks = sequelize.define('completed_tasks', {
     timestamps: false
 });
 
-CompletedTasks.belongsTo(Issues, { foreignKey: 'issue_id', as: 'Issues' });
-CompletedTasks.belongsTo(Equipment, { foreignKey: 'user_id', as: 'Equipment' });
-CompletedTasks.belongsTo(User,{foreignKey: 'equipment_id', as : "User"})
+CompletedTasks.belongsTo(Issues, { foreignKey: 'issue_id', as: 'Issue' });
+CompletedTasks.belongsTo(Equipment, { foreignKey: 'equipment_id', as: 'Equipment' });
+CompletedTasks.belongsTo(User, { foreignKey: 'user_id', as: 'User' });
 
 module.exports = CompletedTasks;

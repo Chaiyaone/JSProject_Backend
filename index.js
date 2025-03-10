@@ -6,10 +6,10 @@ const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/auth');
 const issueRoute = require('./routes/issueRoute');
 const completedRoutes = require('./routes/completedRoutes');
-
+const cors = require("cors");
 const app = express();
 app.use(express.json());
-
+app.use(cors())
 app.use('/equipment', equipmentRoutes)
 app.use('/users', userRoutes)
 app.use('/auth',authRoutes)

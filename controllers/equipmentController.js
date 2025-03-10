@@ -84,3 +84,16 @@ exports.updateEquipment = (req,res) => {
         res.status(500).send(err);
     })
 }
+
+exports.getEquipment = async (req,res) => {
+    try {
+      const equipment = await Equipment.findAll({
+        where: {deleted_at: null },
+        attributes: ["id", "equipment_name"],
+      });
+      res.json(equipment);
+    } catch (error) {
+      console.error("Error fetching technicians:", error);
+      res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
+    }
+  }
