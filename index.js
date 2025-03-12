@@ -11,9 +11,9 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-app.get("/",(res,req) => {
+app.get("/",(req,res) => {
     try{
-        res,send('hello')
+        res.send('hello')
     }catch(err){
         res.send(err)
     }
